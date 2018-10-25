@@ -2,14 +2,20 @@ FROM arm32v6/alpine
 
 LABEL maintainer="https://github.com/hermsi1337"
 
-ENV ROOT_PASSWORD root
+ENV SSHD_CONFIG_DIR=/etc/ssh
 
-RUN apk --no-cache --update add openssh \
-  && sed -i s/#PermitRootLogin.*/PermitRootLogin\ yes/ /etc/ssh/sshd_config \
-  && echo "root:${ROOT_PASSWORD}" | chpasswd
+RUN set -xe \
+  && apk --no-cache --update add openssh \
+  && umask 277 \
+  && mkdir -p /root/.ssh \
+  && chmod -R 700 /root/.ssh \
+  && ln -s /root/.ssh /data
 
-COPY entrypoint.sh /usr/local/bin/
+COPY entrypoint.sh /sbin/entrypoint.sh
+RUN chmod 755 /sbin/entrypoint.sh
 
-EXPOSE 22
+WORKDIR /root
+VOLUME /data
 
-ENTRYPOINT ["entrypoint.sh"]
+EXPOSE 22/tcp
+ENTRYPOINT ["/sbin/entrypoint.sh"]
