@@ -1,13 +1,12 @@
-FROM alpine:latest
+FROM arm32v6/alpine
 
 LABEL maintainer="https://github.com/hermsi1337"
 
 ENV ROOT_PASSWORD root
 
-RUN apk update	&& apk upgrade && apk add openssh \
-		&& sed -i s/#PermitRootLogin.*/PermitRootLogin\ yes/ /etc/ssh/sshd_config \
-		&& echo "root:${ROOT_PASSWORD}" | chpasswd \
-		&& rm -rf /var/cache/apk/* /tmp/*
+RUN apk --no-cache --update add openssh \
+  && sed -i s/#PermitRootLogin.*/PermitRootLogin\ yes/ /etc/ssh/sshd_config \
+  && echo "root:${ROOT_PASSWORD}" | chpasswd
 
 COPY entrypoint.sh /usr/local/bin/
 
