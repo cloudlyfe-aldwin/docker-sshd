@@ -6,7 +6,8 @@ RUN set -xe && \
     apk --no-cache --update add openssh && \
     umask 277 && \
     mkdir -p /root/.ssh && \
-    chmod -R 700 /root/.ssh
+    chmod -R 700 /root/.ssh && \
+    adduser -D -h /home/tunnel -s /sbin/nologin -g tunnel tunnel
 
 COPY entrypoint.sh /sbin/entrypoint.sh
 RUN chmod 755 /sbin/entrypoint.sh
