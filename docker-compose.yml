@@ -6,4 +6,9 @@ services:
       - "2222:22"
     volumes:
       - ./data:/data
-    restart: on-failure
+    restart: unless-stopped
+
+networks:
+  default:
+    external:
+      name: ${NETWORK:-sshd}
