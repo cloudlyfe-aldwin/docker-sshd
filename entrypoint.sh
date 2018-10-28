@@ -10,7 +10,7 @@ if [ ! -z "${ROOT_PASSWORD}" ] && [ "${ROOT_PASSWORD}" != "root" ]; then
     sed -i s/#PermitRootLogin.*/PermitRootLogin\ yes/ /etc/ssh/sshd_config
 else
     echo "root:$(date | md5sum)" | chpasswd
-    sed -i s/#PermitRootLogin.*/PermitRootLogin\ no/ /etc/ssh/sshd_config
+    sed -i s/#PermitRootLogin.*/PermitRootLogin\ prohibit-password/ /etc/ssh/sshd_config
 fi
 
 # copy root authorized_keys
