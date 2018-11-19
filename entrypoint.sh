@@ -27,5 +27,12 @@ if [ -f /data/tunnel_authorized_keys ]; then
     chmod -R 700 /home/tunnel/.ssh
 fi
 
+if [ -f /data/ssh_host_rsa_key ]; then
+    cp -fR /data/ssh_host_rsa_key /etc/ssh
+    ssh-keygen -y -f /etc/ssh/ssh_host_rsa_key > /etc/ssh/ssh_host_rsa_key.pub
+else
+    cp -fR /etc/ssh_host_*_key /data/
+fi
+
 # do not detach (-D), log to stderr (-e), passthrough other arguments
 exec /usr/sbin/sshd -D -e "$@"
