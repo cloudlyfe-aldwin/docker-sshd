@@ -2,15 +2,18 @@ FROM alpine:latest
 
 LABEL maintainer="https://github.com/hermsi1337"
 
-ENV ROOT_PASSWORD root
+RUN set -xe && \
+    apk --no-cache add openssh && \
+    umask 277 && \
+    mkdir -p /root/.ssh && \
+    chmod -R 700 /root/.ssh && \
+    adduser -D -h /home/tunnel -s /sbin/nologin -g tunnel tunnel
 
-RUN apk update	&& apk upgrade && apk add openssh \
-		&& sed -i s/#PermitRootLogin.*/PermitRootLogin\ yes/ /etc/ssh/sshd_config \
-		&& echo "root:${ROOT_PASSWORD}" | chpasswd \
-		&& rm -rf /var/cache/apk/* /tmp/*
+COPY entrypoint.sh /sbin/entrypoint.sh
+RUN chmod 755 /sbin/entrypoint.sh
 
-COPY entrypoint.sh /usr/local/bin/
+WORKDIR /root
+VOLUME /data
 
-EXPOSE 22
-
-ENTRYPOINT ["entrypoint.sh"]
+EXPOSE 22/tcp
+ENTRYPOINT ["/sbin/entrypoint.sh"]
