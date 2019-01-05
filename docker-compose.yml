@@ -3,10 +3,13 @@ services:
   sshd:
     container_name: sshd
     build: ./
+    image: alpine-sshd
     ports:
       - "2222:22"
     volumes:
-      - ./data:/data:ro
+      - /etc/localtime:/etc/localtime:ro
+      - ./log:/var/log:rw
+      - ./data:/data:rw
     restart: unless-stopped
 
 networks:

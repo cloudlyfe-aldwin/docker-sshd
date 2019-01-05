@@ -1,4 +1,4 @@
-FROM arm32v6/alpine
+FROM alpine
 
 LABEL maintainer="https://github.com/hermsi1337"
 

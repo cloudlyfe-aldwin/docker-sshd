@@ -11,6 +11,7 @@ if [ ! -z "${ROOT_PASSWORD}" ] && [ "${ROOT_PASSWORD}" != "root" ]; then
 else
     echo "root:$(date | md5sum)" | chpasswd
     sed -i s/#PermitRootLogin.*/PermitRootLogin\ prohibit-password/ /etc/ssh/sshd_config
+    sed -i s/#PasswordAuthentication.*/PasswordAuthentication\ no/ /etc/ssh/sshd_config
 fi
 
 # copy root authorized_keys
@@ -27,12 +28,20 @@ if [ -f /data/tunnel_authorized_keys ]; then
     chmod -R 700 /home/tunnel/.ssh
 fi
 
-if [ -f /data/ssh_host_rsa_key ]; then
-    cp -fR /data/ssh_host_rsa_key /etc/ssh
-    ssh-keygen -y -f /etc/ssh/ssh_host_rsa_key > /etc/ssh/ssh_host_rsa_key.pub
-else
-    cp -fR /etc/ssh_host_*_key /data/
-fi
+for f in /data/ssh_host_*_key; do
+    file=$(basename "$f")
+    if [ -e "$f" ]; then
+        cp -f "$f" "/etc/ssh/$file"
+        ssh-keygen -y -f "$f" > "/etc/ssh/$file.pub"
+    else
+        cp -f "/etc/ssh/$file" /data
+        break
+    fi
+done
+
+
+# start syslogd
+syslogd -Z -S
 
 # do not detach (-D), log to stderr (-e), passthrough other arguments
-exec /usr/sbin/sshd -D -e "$@"
+exec /usr/sbin/sshd -D "$@"
