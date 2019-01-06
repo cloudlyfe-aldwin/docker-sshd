@@ -39,9 +39,8 @@ for f in /data/ssh_host_*_key; do
     fi
 done
 
-
-# start syslogd
-syslogd -Z -S
+# start rsyslogd
+rsyslogd
 
 # do not detach (-D), log to stderr (-e), passthrough other arguments
 exec /usr/sbin/sshd -D "$@"

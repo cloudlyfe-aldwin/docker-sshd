@@ -1,14 +1,15 @@
 version: '3'
 services:
   sshd:
-    container_name: sshd
+    container_name: ${CONTAINER_NAME:-sshd}
     build: ./
     image: alpine-sshd
     ports:
       - "2222:22"
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - ./log:/var/log:rw
+      - /etc/timezone:/etc/timezone:ro
+      - /var/log/docker/${CONTAINER_NAME:-sshd}:/var/log:rw
       - ./data:/data:rw
     restart: unless-stopped
 
