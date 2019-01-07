@@ -1,17 +1,30 @@
 version: '3'
 services:
   sshd:
-    container_name: ${CONTAINER_NAME:-sshd}
-    build: ./
+    build: .
     image: alpine-sshd
+    container_name: sshd
     ports:
       - "2222:22"
     volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - /etc/timezone:/etc/timezone:ro
-      - /var/log/docker/${CONTAINER_NAME:-sshd}:/var/log:rw
-      - ./data:/data:rw
+      - ./data/sshd:/data:rw
+      - shared-volume:/var/log
     restart: unless-stopped
+
+  fail2ban:
+    image: crazymax/fail2ban
+    container_name: fail2ban
+    network_mode: "host"
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    volumes:
+      - "./data/fail2ban:/data"
+      - shared-volume:/var/log
+    restart: always
+
+volumes:
+  shared-volume:
 
 networks:
   default:

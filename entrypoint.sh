@@ -39,7 +39,7 @@ for f in /data/ssh_host_*_key; do
     fi
 done
 
-# start rsyslogd
+# start logger service
 rsyslogd
 
 # do not detach (-D), log to stderr (-e), passthrough other arguments

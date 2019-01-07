@@ -3,6 +3,7 @@ FROM alpine
 LABEL maintainer="https://github.com/hermsi1337"
 
 RUN set -xe && \
+    apk --no-cache --update upgrade && \
     apk --no-cache --update add openssh rsyslog && \
     umask 277 && \
     mkdir -p /root/.ssh && \
