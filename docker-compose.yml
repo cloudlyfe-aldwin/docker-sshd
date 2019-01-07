@@ -21,6 +21,8 @@ services:
     volumes:
       - "./data/fail2ban:/data"
       - shared-volume:/var/log
+    env_file:
+      - ./fail2ban.env
     restart: always
 
 volumes:
